@@ -1,0 +1,12 @@
+/*
+* Name: Megan Chu
+* PID: A12814536
+* Date: April 28, 2017
+* CSE 100 PA3 C++ Autocomplete
+*/
+
+We can see that the BST graph increases drastically at first and levels off at a runtime of about 86000-87000 nanoseconds, which is representative of a logarithmic runtime.
+
+We see that the hashtable graph slightly increases in runtime for each growing dictionary size, however this increase is small compared to the drastic stepsize of 15000 words.  The hashtable runtime for find is not exactly O(1), but is is pretty close to it.  I think we may account for the increase in runtime due to collision handling.  The more items there are in the dictionary, the more collisions there are, and the more lines of code that need to be executed to find a certain word.
+
+We see that the trie graph increasing in runtime by about 10000 nanoseconds over a difference of 285000 words in the dictionary.  It also levels off at around 30000 nanoseconds.  Which is reasonable because there is a certain max length of how long a string can be, and therefore the runtime should not be go over that of the longest length.

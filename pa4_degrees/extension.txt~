@@ -1,0 +1,32 @@
+/*
+* Name: Megan Chu
+* PID: A12814536
+* Date: May 25, 2017
+* CSE 100 PA3 C++ Kevin Bacon
+*/
+
+- problem solved: print out a possible schedule of classes
+  for my major in order of course prerequisite fulfillment courses not
+  printed can be taken at end in any order
+
+- I solved this by creating a graph with directed edges, linking courses and 
+their prerequisite courses, and using a queue that had priority based on if 
+prerequisites were fulfilled.  if a course requires multiple prerequisites, 
+the course will have to be "hit" that many times before it can be traversed
+and go to the next course
+
+- I tested this using a sample input file of prerequisite and course pairs for 
+my major, creating a directed graph with edges, and iterating through 
+the courses
+
+- to run the program use the following format
+  $ make extension
+  $ ./extension <inputFilename> <outputFilename>   
+  *I used courses.csv for input
+!! NEED TO MAKE SURE all courses in input are typed the same way,
+NO extra tabs or spaces
+
+Link to download test file:
+https://docs.google.com/a/ucsd.edu/document/d/1sQF19VcaCZVQlvzKwCYfjllG3UmrUrsnxyWfkaoieyM/edit?usp=sharing
+
+
