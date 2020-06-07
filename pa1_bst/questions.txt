@@ -1,0 +1,132 @@
+/*
+* Author: Megan Chu
+* PID: A12814536
+* Date: April 14, 2017
+* PA1 CSE 100 2017
+*
+* text file with answers to questions given in PA1 instructions
+* 
+*/
+
+Q1. What are all the files that are created when I type 'make bst' for the 
+first time?
+
+  Existing files:
+    testBST.cpp
+    BSTInt.cpp
+    BSTNodeInt.cpp
+    BST.hpp
+    BSTNode.hpp
+    BSTIterator.hpp
+  Created files:
+    testBST.o
+    BSTInt.o
+    BSTNodeInt.o
+    and executable file "bst"
+   
+
+
+Q2: In the file BSTInt.cpp, remove the name scope from the insert function. 
+That is, change the function header from
+bool BSTInt::insert(int item) to bool insert(int item)...
+
+    g++  	 -g -Wall -std=c++11 -c BSTInt.cpp
+    BSTInt.cpp: In function 'bool insert(int)':
+    BSTInt.cpp:25:8: error: 'root' was not declared in this scope
+       if (!root) {
+            ^
+     BSTInt.cpp:27:7: error: 'isize' was not declared in this scope
+         ++isize;
+           ^
+     BSTInt.cpp:31:22: error: 'root' was not declared in this scope
+       BSTNodeInt* curr = root;
+                      ^
+    BSTInt.cpp:56:5: error: 'isize' was not declared in this scope
+       ++isize;
+         ^
+    make: *** [BSTInt.o] Error 1
+    
+We are defining the insert method from OUTSIDE of the BSTInt class.  Without 
+the BSTInt:: we are defining an insert method on a different scope outside of 
+the BSTInt class such that it is no longer a part of the BSTInt class.  
+Because of this, we get the errors, 'root' and 'isize' was not declared in 
+this scope, since those two variables are members of the BSTInt class and 
+without the BSTInt:: in front of insert, the insert method is declared on a 
+global scope and is not a member of the same BSTInt class.  Therefore the 
+insert method cannot access those variables since they are not accessible 
+from the global scope.
+
+
+Q3: In a sentence or two, describe the bug in the code. What function was it 
+is, and what was it?
+
+The bug was that the insert method did not check for cases where a node has 
+only a single right OR left child, it also did not check for duplicate 
+insertions for nodes without 2 children.  Because the insert method only 
+checked for cases where a node had two children, when it came time to insert 
+the new item there was the possibility of overwriting/losing the original 
+single child of a node with only one child.  There was also the possibility 
+of not checking for a duplicate insert and returning false if the curr node 
+had only one or no children.  
+
+
+Q4: In about a paragraph, describe the process you used to find and fix the 
+bug. Include any tools you used and how you used them. If you were able to 
+spot the bug by just looking at the code, describe your reasoning process in 
+detail. We're not looking for the corrected code here (we already have that 
+in your .cpp file). Rather we're looking for a description of your debugging 
+process. Please be specific.
+
+I read-over the code for the insert method first, and saw that there was a 
+while loop for the case of two children to find the correct spot in the tree 
+for the new item.  After I read through the while loop, I was next expecting 
+to to read some code with a loop for just having the right child or just 
+having the left child.  However, I did not see the mentioned cases, and the 
+code immediately jumped to inserting the new item  as a left/right child 
+depending on the compared values, which I realized gave a chance of 
+overwriting the original single child.  Part of my conclusion came from 
+testing the height method, when I inserted an item larger than the existing 
+items in the tree, the height did not increment.  This was further confirmed 
+when I inserted a new item to the bst and tested the find method for that 
+new item (so the find method had no problems).  Finally, I confirmed that 
+the above mentioned bug was the correct problem by deliberately inserting 
+an item (0) to the tree which had a node (1) with a single left child 
+(-33).  After this, I used the find method to try to find (-33), but it was 
+not found anymore, proving it had been overwritten by the insert method and 
+showing that this was the correct bug.  I proceeded to fix the bug by adding 
+cases for nodes with single children within the while loop, and changing the 
+check for the loop from needing both children (&&) to needing either or both 
+children (||).  I checked the correctness of my fixed method by using the 
+same test cases I used to find the bug, and adding extra cases/break 
+statements to the while loop where necessary.  After submitting the code to 
+vocareum I got the "Insertion of duplicates failed" message, I proceeded to 
+trace my code, and saw that because I put the item == curr->data check 
+INSIDE the while loop, I was not checking for duplicates of nodes with no 
+children.  I moved my check to outside of the while loop, which fixed the 
+error.
+
+
+Q5: Look at header for the insert method in the BST.hpp and compare it to 
+the header of the insert method in BSTInt.h. For each class state whether 
+the insert method passes its argument by value or by reference. Explain why 
+each method probably uses the method that it uses (i.e. if pass by value, 
+explain why not pass by reference, and if pass by reference, explain why not 
+pass by value).
+
+For BST.hpp the insert method passes its argument by reference.  For 
+BSTInt.h, the insert method passes its argument by value. We need to pass 
+by reference in BST.hpp because it would be less time efficient to make a 
+new copy of a "Data" object if it was not a simple data type.  We are also 
+including the use of BSTIterator, which will need to compare whether two 
+iterators are pointing to the same node.  By using references, we can easily 
+compare if the data from the node that each iterator points to is the same.  
+If we had passed by value instead, we would be making a "copy" of data every 
+time, making it harder to compare if two iterators are pointing to nodes 
+with the same data.  For BSTInt.h we do not need to pass by reference, since 
+we will only be having primitive int data in the nodes, the int values can 
+be easily copied because we know the exact components of each int, the int 
+values can also be easily compared with == since they are primitive type.  
+We technically could pass by reference for BSTInt.h, however that will only 
+require more operations to access the value from the reference than just 
+passing by value and creating a new int variable, so it is more favorable to 
+pass by value since we have a primitive int datatype.
